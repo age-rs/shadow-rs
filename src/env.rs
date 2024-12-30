@@ -357,6 +357,10 @@ The debug configuration with which the project was built.
 Note that this is not the Rust channel, but either `debug` or `release`, depending on whether debug assertions were enabled in the build or not. "#;
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
+const CARGO_FEATURES_DOC: &str = r#"
+List of top-level crate features that are enabled for the build."#;
+const CARGO_FEATURES: ShadowConst = "CARGO_FEATURES";
+
 pub(crate) fn build_time(project: &mut Project) {
     // Enable reproducible builds: https://reproducible-builds.org/docs/source-date-epoch/
     let time = now_date_time();
@@ -418,6 +422,23 @@ pub(crate) fn new_project(std_env: &BTreeMap<String, String>) -> BTreeMap<Shadow
         val.t = ConstType::Str;
         val.v = v.to_string();
     }
+
+    let features: Vec<_> = std_env
+        .iter()
+        .filter(|(k, _)| k.contains("CARGO_FEATURE_"))
+        .map(|(k, _)| k.strip_prefix("CARGO_FEATURE_").unwrap().to_lowercase())
+        .collect();
+
+    let features = features.join(",");
+
+    project.map.insert(
+        CARGO_FEATURES,
+        ConstVal {
+            desc: CARGO_FEATURES_DOC.to_string(),
+            v: features,
+            t: ConstType::Str,
+        },
+    );
 
     project.map
 }
