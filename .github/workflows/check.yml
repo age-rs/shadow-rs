@@ -39,6 +39,13 @@ jobs:
       - name: Run tests
         run: cargo test
 
+      # Test Issue #237: verify build without metadata feature
+      - name: Test build without metadata feature
+        run: cargo check --no-default-features --features "git2 tzdb build"
+      
+      - name: Run tests without metadata feature
+        run: cargo test --no-default-features --features "git2 tzdb build"
+
       # Run examples with debug
       - name: Run examples with debug
         run: cargo run --example builtin_fn
