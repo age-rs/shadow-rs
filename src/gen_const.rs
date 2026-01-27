@@ -1,4 +1,7 @@
-use crate::{Shadow, CARGO_CLIPPY_ALLOW_ALL, CARGO_METADATA};
+#[allow(unused_imports)]
+use crate::CARGO_CLIPPY_ALLOW_ALL;
+#[cfg(feature = "metadata")]
+use crate::{Shadow, CARGO_METADATA};
 
 macro_rules! gen_const {
     ($fn_name:ident, $fn_body:expr) => {
@@ -76,6 +79,7 @@ gen_const!(clap_long_version_tag_const, CLAP_LONG_VERSION_TAG_CONST);
 pub(crate) const BUILD_CONST_VERSION: &str = "VERSION";
 pub(crate) const BUILD_CONST_CLAP_LONG_VERSION: &str = "CLAP_LONG_VERSION";
 
+#[cfg(feature = "metadata")]
 #[allow(dead_code)]
 pub(crate) fn cargo_metadata_fn(shadow: &Shadow) -> String {
     if !shadow.map.contains_key(CARGO_METADATA) {
